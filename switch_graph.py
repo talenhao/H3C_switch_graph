@@ -13,9 +13,7 @@ import getopt
 import os
 import re
 
-import pymysql
 import xlsxwriter
-
 
 import collect_log
 
