@@ -118,7 +118,7 @@ def process_log(log_list):
                         # 没有匹配，不进行收集neighbor操作。
                         continue
                     else:
-                        # 出现swithc_name,则收集。
+                        # 出现switch_name,则收集。
                         switch_name = switch_match.group('SN')
                         c_logger.info("switch_name : %r", switch_name)
                         switch_neighbor[switch_name]=[]
@@ -141,64 +141,6 @@ def process_log(log_list):
                         )
     c_logger.debug("%r >> switch_neighbor: %r", switch_name, switch_neighbor)
     return switch_neighbor
-
-
-class DbInitConnect(object):
-    """
-    数据库初始化及连接，游标
-    """
-    def __init__(self):
-        self.host = '192.168.1.138'
-        self.port = 3306
-        self.password = 'yed'
-        self.username = 'yed'
-        self.db = 'switch_graph'
-
-    # 连接数据库
-    def db_connect(self):
-        self.connect = pymysql.Connect(host=self.host,
-                                       port=self.port,
-                                       passwd=self.password,
-                                       user=self.username,
-                                       database=self.db)
-        # 返回指针
-        return self.connect
-
-    # 游标
-    def db_cursor(self):
-        self.cursor = self.db_connect().cursor()
-        return self.cursor
-
-    def finally_close_all(self):
-        """
-        关闭游标，关闭连接。
-        """
-        self.connect.commit()
-        self.cursor.close()
-        self.connect.close()
-
-    def show_databases(self):
-        cursor = self.db_cursor()
-        sql_cmd = 'show create database %s' % self.db
-        try:
-            cursor.execute(sql_cmd)
-        except:
-            c_logger.info('数据库连接有问题。')
-            sys.exit()
-        finally:
-            for row in cursor.fetchall():
-                c_logger.info(row)
-
-
-def write_to_open_xlsx(switch_neighbor):
-    wb = workbook()
-    # 如果使用默认的sheet
-    # ws = wb.active
-    # 自己创建sheet
-    ws = wb.create_sheet("switch_graph", 0)
-    # 设置标签背景色
-    ws.sheet_properties.tabColor = "1072BA"
-    c_logger.debug(wb.sheetnames)
 
 
 def write_to_excel(switch_neighbor):
